@@ -9,7 +9,6 @@ logger = logging.getLogger(__name__)
 
 # Environment variables
 BITBUCKET_ACCESS_TOKEN = os.getenv("BITBUCKET_ACCESS_TOKEN")
-BITBUCKET_APP_PASSWORD = os.getenv("BITBUCKET_APP_PASSWORD")
 BITBUCKET_API_BASE = "https://api.bitbucket.org/2.0"
 
 def get_pr_diff(pr_info):
@@ -28,15 +27,11 @@ def get_pr_diff(pr_info):
         # Prepare authentication
         headers = {}
         
-        if BITBUCKET_ACCESS_TOKEN:
-            # Use token-based authentication
-            headers["Authorization"] = f"Bearer {BITBUCKET_ACCESS_TOKEN}"
-        elif BITBUCKET_APP_PASSWORD:
-            # Use app password in Authorization header
-            headers["Authorization"] = f"Bearer {BITBUCKET_APP_PASSWORD}"
-        else:
-            logger.error("No authentication credentials provided for Bitbucket API")
+        if not BITBUCKET_ACCESS_TOKEN:
+            logger.error("BITBUCKET_ACCESS_TOKEN not configured")
             return None
+            
+        headers["Authorization"] = f"Bearer {BITBUCKET_ACCESS_TOKEN}"
         
         headers["Accept"] = "text/plain"
         
@@ -210,15 +205,11 @@ def get_latest_commit_id(pr_info):
         # Prepare authentication
         headers = {}
         
-        if BITBUCKET_ACCESS_TOKEN:
-            # Use token-based authentication
-            headers["Authorization"] = f"Bearer {BITBUCKET_ACCESS_TOKEN}"
-        elif BITBUCKET_APP_PASSWORD:
-            # Use app password in Authorization header
-            headers["Authorization"] = f"Bearer {BITBUCKET_APP_PASSWORD}"
-        else:
-            logger.error("No authentication credentials provided for Bitbucket API")
+        if not BITBUCKET_ACCESS_TOKEN:
+            logger.error("BITBUCKET_ACCESS_TOKEN not configured")
             return None
+            
+        headers["Authorization"] = f"Bearer {BITBUCKET_ACCESS_TOKEN}"
         
         # Make the request
         response = requests.get(

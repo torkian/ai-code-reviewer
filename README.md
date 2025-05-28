@@ -172,14 +172,12 @@ Create a `.env` file based on `.env.example`:
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `OPENAI_API_KEY` | Yes | Your OpenAI API key |
-| `BITBUCKET_ACCESS_TOKEN` | Yes* | Bitbucket access token (preferred) |
-| `BITBUCKET_APP_PASSWORD` | Yes* | Bitbucket app password (alternative) |
+| `BITBUCKET_ACCESS_TOKEN` | Yes | Bitbucket access token |
 | `WEBHOOK_SECRET` | Recommended | Secret for webhook signature verification |
 | `PORT` | No | Server port (default: 5000) |
 | `FLASK_DEBUG` | No | Enable debug mode (default: false) |
 | `API_RATE_LIMIT` | No | Requests per hour limit (default: 60) |
 
-*Choose either `BITBUCKET_ACCESS_TOKEN` or `BITBUCKET_APP_PASSWORD`
 
 ### Getting API Credentials
 
@@ -188,17 +186,14 @@ Create a `.env` file based on `.env.example`:
 2. Create a new API key
 3. Copy the key to your `.env` file
 
-#### Bitbucket Access Token (Recommended)
-1. Go to Bitbucket Settings → App passwords
-2. Create a new app password with these permissions:
-   - Repositories: Read
-   - Pull requests: Read, Write
-3. Copy the token to your `.env` file
-
-#### Bitbucket App Password (Alternative)
-1. Go to Bitbucket Settings → Personal Bitbucket settings → App passwords
-2. Create a new app password with pull request permissions
-3. Copy the password to your `.env` file
+#### Bitbucket Access Token
+1. Go to [Bitbucket Settings → App passwords](https://bitbucket.org/account/settings/app-passwords/)
+2. Click "Create app password"
+3. Give it a label (e.g., "AI Code Reviewer")
+4. Select these permissions:
+   - **Repositories**: Read
+   - **Pull requests**: Read, Write
+5. Click "Create" and copy the generated token to your `.env` file
 
 ### Webhook Setup
 
