@@ -17,15 +17,15 @@ from pathlib import Path
 
 class IntegrationTest:
     """Integration test runner"""
-    
+
     def __init__(self):
         self.server_process = None
         self.server_url = "http://localhost:5000"
-    
+
     def start_server(self):
         """Start the Flask server for testing"""
         print("🚀 Starting Flask server for integration test...")
-        
+
         # Set test environment variables
         env = os.environ.copy()
         env.update({
@@ -35,12 +35,12 @@ class IntegrationTest:
             'PORT': '5000',
             'FLASK_DEBUG': 'false'
         })
-        
+
         try:
             self.server_process = subprocess.Popen([
                 sys.executable, 'app.py'
             ], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            
+
             # Wait for server to start
             for _ in range(10):
                 try:
@@ -50,14 +50,14 @@ class IntegrationTest:
                         return True
                 except requests.exceptions.RequestException:
                     time.sleep(1)
-            
+
             print("❌ Server failed to start")
             return False
-            
+
         except Exception as e:
             print(f"❌ Error starting server: {e}")
             return False
-    
+
     def stop_server(self):
         """Stop the Flask server"""
         if self.server_process:
@@ -68,7 +68,7 @@ class IntegrationTest:
             except subprocess.TimeoutExpired:
                 self.server_process.kill()
             self.server_process = None
-    
+
     def test_home_endpoint(self):
         """Test the home endpoint"""
         print("🧪 Testing home endpoint...")
@@ -81,7 +81,7 @@ class IntegrationTest:
         except Exception as e:
             print(f"❌ Home endpoint failed: {e}")
             return False
-    
+
     def test_status_endpoint(self):
         """Test the status endpoint"""
         print("🧪 Testing status endpoint...")
@@ -96,7 +96,7 @@ class IntegrationTest:
         except Exception as e:
             print(f"❌ Status endpoint failed: {e}")
             return False
-    
+
     def test_webhook_endpoint(self):
         """Test the webhook endpoint"""
         print("🧪 Testing webhook endpoint...")
@@ -110,7 +110,7 @@ class IntegrationTest:
         except Exception as e:
             print(f"❌ Webhook endpoint failed: {e}")
             return False
-    
+
     def test_rate_limiting(self):
         """Test rate limiting functionality"""
         print("🧪 Testing rate limiting...")
@@ -120,7 +120,7 @@ class IntegrationTest:
             for i in range(5):
                 response = requests.get(f"{self.server_url}/test", timeout=10)
                 responses.append(response.status_code)
-            
+
             # Should get mostly 200s, possibly some 429s if rate limiting kicks in
             success_count = sum(1 for code in responses if code == 200)
             assert success_count >= 3  # At least some should succeed
@@ -129,15 +129,15 @@ class IntegrationTest:
         except Exception as e:
             print(f"❌ Rate limiting test failed: {e}")
             return False
-    
+
     def run_all_tests(self):
         """Run all integration tests"""
         print("🧪 AI Code Reviewer - Integration Test Suite")
         print("=" * 50)
-        
+
         if not self.start_server():
             return False
-        
+
         try:
             tests = [
                 self.test_home_endpoint,
@@ -145,18 +145,18 @@ class IntegrationTest:
                 self.test_webhook_endpoint,
                 self.test_rate_limiting
             ]
-            
+
             passed = 0
             total = len(tests)
-            
+
             for test in tests:
                 if test():
                     passed += 1
                 print()  # Add spacing between tests
-            
+
             print("=" * 50)
             print(f"📊 Integration Test Results: {passed}/{total} tests passed")
-            
+
             if passed == total:
                 print("🎉 All integration tests passed!")
                 print("\n📝 Your AI Code Reviewer is working correctly!")
@@ -166,7 +166,7 @@ class IntegrationTest:
                 print("❌ Some integration tests failed")
                 print("🔧 Check the error messages above")
                 return False
-                
+
         finally:
             self.stop_server()
 
@@ -177,17 +177,17 @@ def main():
     if not Path('app.py').exists():
         print("❌ app.py not found. Run this script from the project root directory.")
         sys.exit(1)
-    
+
     test_runner = IntegrationTest()
-    
+
     # Handle Ctrl+C gracefully
     def signal_handler(sig, frame):
         print("\n🛑 Test interrupted by user")
         test_runner.stop_server()
         sys.exit(1)
-    
+
     signal.signal(signal.SIGINT, signal_handler)
-    
+
     try:
         success = test_runner.run_all_tests()
         sys.exit(0 if success else 1)
