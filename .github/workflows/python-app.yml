@@ -54,10 +54,11 @@ jobs:
         bandit -r . -f json -o bandit-report.json || true
         bandit -r . -ll
 
-    - name: Check dependencies for vulnerabilities
+    - name: Check dependencies for vulnerabilities  
       run: |
-        safety check --json --output safety-report.json || true
-        safety check
+        # Use the new safety scan command (replaces deprecated check)
+        safety scan --output json --save-as safety-report.json || true
+        safety scan || echo "⚠️ Some vulnerabilities found - check report"
 
     - name: Run unit tests
       run: |

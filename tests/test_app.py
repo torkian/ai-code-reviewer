@@ -36,8 +36,8 @@ class TestFlaskApp:
     def test_webhook_endpoint_no_data(self, client):
         """Test webhook endpoint with no data"""
         response = client.post('/webhook')
-        # Should fail due to missing signature/data
-        assert response.status_code in [400, 401]
+        # Should fail due to missing signature/data/content-type
+        assert response.status_code in [400, 401, 415]
     
     @patch('src.utils.webhook_utils.verify_webhook_signature')
     def test_webhook_endpoint_non_pr_event(self, mock_verify, client, sample_webhook_payload):
