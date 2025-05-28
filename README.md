@@ -1,5 +1,7 @@
 # 🤖 Bitbucket AI Code Reviewer
 
+[![CI Status](https://github.com/torkian/ai-code-reviewer/workflows/AI%20Code%20Reviewer%20CI/badge.svg)](https://github.com/torkian/ai-code-reviewer/actions)
+[![Tests](https://img.shields.io/github/actions/workflow/status/torkian/ai-code-reviewer/python-app.yml?branch=main&label=tests)](https://github.com/torkian/ai-code-reviewer/actions)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8+-green.svg)](https://python.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](Dockerfile)
