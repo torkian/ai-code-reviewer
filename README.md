@@ -144,14 +144,24 @@ docker run -d -p 5000:5000 --env-file .env ai-code-reviewer
 
 ### 🔧 **Local Development Only**
 
-For local testing (not production):
-```bash
-# Option 1: LocalTunnel (free alternative to ngrok)
-npx localtunnel --port 5000
+For testing webhooks locally before production deployment:
 
-# Option 2: Cloudflare Tunnel (free)
-cloudflared tunnel --url http://localhost:5000
+```bash
+# Start your Flask application first
+python app.py
+# Server runs on http://localhost:5000
+
+# Then in another terminal, expose it publicly:
+# Option 1: Using ngrok (most reliable)
+# Download from https://ngrok.com, then:
+./ngrok http 5000
+# Use the https://xxxx.ngrok.io URL for Bitbucket webhook
+
+# Option 2: SSH tunnel (if you have access to a server)
+ssh -R 80:localhost:5000 serveo.net
 ```
+
+**Note:** Local tunnels are temporary and only for development. Always use cloud deployment for production.
 
 ## Configuration
 

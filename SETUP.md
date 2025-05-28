@@ -105,12 +105,13 @@ git push heroku main
 
 **Railway (Modern & Fast)**
 ```bash
-# 1. Install Railway CLI: npm install -g @railway/cli
+# 1. Install Railway CLI: 
+curl -fsSL https://railway.app/install.sh | sh
 # 2. Deploy
 railway login
 railway new
-railway add
-railway deploy
+railway link
+railway up
 # 3. Set environment variables in Railway dashboard
 ```
 
@@ -215,26 +216,46 @@ If you encounter issues:
 
 ### Local Development Testing
 
-If you need to test locally before deploying to production:
+If you need to test webhooks locally before deploying to production:
 
-**Option 1: LocalTunnel (Free)**
+**Step 1: Start Your Flask Application**
 ```bash
-# Start your local server
+# Make sure you have configured .env file first
 python app.py
-
-# In another terminal, expose it publicly
-npx localtunnel --port 5000
-# Use the provided https://xxx.loca.lt URL for webhook
+# Flask server starts on http://localhost:5000
 ```
 
-**Option 2: Cloudflare Tunnel (Free)**
+**Step 2: Expose Locally (Choose One Option)**
+
+**Option 1: ngrok (Recommended)**
 ```bash
-# Install cloudflared, then:
-cloudflared tunnel --url http://localhost:5000
-# Use the provided https://xxx.trycloudflare.com URL
+# Download ngrok from https://ngrok.com
+# Extract and run:
+./ngrok http 5000
+# Copy the https://xxxx.ngrok.io URL for your Bitbucket webhook
 ```
 
-**Note:** Local tunnels are for development only. Use cloud deployment for production.
+**Option 2: SSH Tunnel**
+```bash
+# If you have access to a server with SSH:
+ssh -R 80:localhost:5000 serveo.net
+# Use the provided URL for webhook
+```
+
+**Option 3: Cloud Development**
+- **GitHub Codespaces**: Flask port 5000 automatically exposed
+- **Replit**: Public URL provided automatically
+- **Gitpod**: Port forwarding built-in
+
+**Step 3: Test Your Setup**
+```bash
+# Test your public URL:
+curl https://your-tunnel-url.com/test
+
+# Should return: {"status": "success", "message": "Server is accessible"}
+```
+
+**Note:** Local tunnels are temporary and only for development. Use cloud deployment for production.
 
 ## Advanced Configuration
 
