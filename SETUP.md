@@ -89,15 +89,47 @@ Before starting, ensure you have:
    curl http://localhost:5000/test
    ```
 
-### Option C: Cloud Deployment
+### Option C: Cloud Deployment (Recommended for Production)
 
-For production use, deploy to a cloud service like:
-- **Heroku**: Use the included `Dockerfile`
-- **AWS ECS**: Use the Docker image
-- **Google Cloud Run**: Deploy the container
-- **DigitalOcean App Platform**: Connect the repository
+**Heroku (Easiest)**
+```bash
+# 1. Install Heroku CLI from https://devcenter.heroku.com/articles/heroku-cli
+# 2. Deploy your app
+heroku login
+heroku create your-ai-reviewer-name
+heroku config:set OPENAI_API_KEY=your_actual_key
+heroku config:set BITBUCKET_ACCESS_TOKEN=your_actual_token  
+heroku config:set WEBHOOK_SECRET=your_chosen_secret
+git push heroku main
+```
 
-Make sure your deployment is accessible via HTTPS for webhook security.
+**Railway (Modern & Fast)**
+```bash
+# 1. Install Railway CLI: npm install -g @railway/cli
+# 2. Deploy
+railway login
+railway new
+railway add
+railway deploy
+# 3. Set environment variables in Railway dashboard
+```
+
+**Render (Simple)**
+```bash
+# 1. Connect your GitHub repo to https://render.com
+# 2. Create a new Web Service
+# 3. Set environment variables in Render dashboard
+# 4. Deploy automatically on every git push
+```
+
+**DigitalOcean App Platform**
+```bash
+# 1. Connect repository at https://cloud.digitalocean.com/apps
+# 2. Configure environment variables
+# 3. Deploy with automatic HTTPS
+```
+
+All these platforms provide **free tiers** and **automatic HTTPS** for webhook security.
 
 ## Step 4: Configure Bitbucket Webhook
 
@@ -175,11 +207,34 @@ If you encounter issues:
    # Test the service is running
    curl https://your-domain.com/test
    
-   # Check webhook endpoint
+   # Check webhook endpoint (basic test)
    curl -X POST https://your-domain.com/webhook \
      -H "Content-Type: application/json" \
      -d '{"test": true}'
    ```
+
+### Local Development Testing
+
+If you need to test locally before deploying to production:
+
+**Option 1: LocalTunnel (Free)**
+```bash
+# Start your local server
+python app.py
+
+# In another terminal, expose it publicly
+npx localtunnel --port 5000
+# Use the provided https://xxx.loca.lt URL for webhook
+```
+
+**Option 2: Cloudflare Tunnel (Free)**
+```bash
+# Install cloudflared, then:
+cloudflared tunnel --url http://localhost:5000
+# Use the provided https://xxx.trycloudflare.com URL
+```
+
+**Note:** Local tunnels are for development only. Use cloud deployment for production.
 
 ## Advanced Configuration
 

@@ -94,25 +94,64 @@ python test_installation.py
 |-------------|-----------------|-------------|
 | 🔑 **OpenAI API Key** | [OpenAI Platform](https://platform.openai.com/api-keys) | 2 minutes |
 | 🔐 **Bitbucket Token** | [Bitbucket Settings](https://bitbucket.org/account/settings/) | 2 minutes |
-| 🌐 **Public URL** | [ngrok](https://ngrok.com) or cloud deployment | 1 minute |
+| 🌐 **Public Deployment** | [Heroku](https://heroku.com), [Railway](https://railway.app), or [Render](https://render.com) (all free) | 5 minutes |
 
-### Docker Deployment
+## 🌐 Deployment Options
 
-1. **Using Docker Compose (Recommended)**
-   ```bash
-   # Copy and configure environment
-   cp .env.example .env
-   # Edit .env with your configuration
-   
-   # Start the service
-   docker-compose up -d
-   ```
+### 🚀 **Cloud Deployment (Production Ready)**
 
-2. **Using Docker directly**
-   ```bash
-   docker build -t bitbucket-ai-reviewer .
-   docker run -d -p 5000:5000 --env-file .env bitbucket-ai-reviewer
-   ```
+**Heroku (Easiest)**
+```bash
+# Install Heroku CLI, then:
+heroku create your-ai-reviewer
+heroku config:set OPENAI_API_KEY=your_key_here
+heroku config:set BITBUCKET_ACCESS_TOKEN=your_token_here
+heroku config:set WEBHOOK_SECRET=your_secret_here
+git push heroku main
+```
+
+**Railway (Modern)**
+```bash
+# Install Railway CLI, then:
+railway login
+railway new
+railway add
+railway deploy
+# Configure environment variables in Railway dashboard
+```
+
+**Render (Simple)**
+```bash
+# 1. Connect your GitHub repo to Render
+# 2. Set environment variables in Render dashboard
+# 3. Deploy automatically on git push
+```
+
+### 🐳 **Docker Deployment**
+
+**Docker Compose (Recommended)**
+```bash
+cp .env.example .env
+# Edit .env with your configuration
+docker-compose up -d
+```
+
+**Docker CLI**
+```bash
+docker build -t ai-code-reviewer .
+docker run -d -p 5000:5000 --env-file .env ai-code-reviewer
+```
+
+### 🔧 **Local Development Only**
+
+For local testing (not production):
+```bash
+# Option 1: LocalTunnel (free alternative to ngrok)
+npx localtunnel --port 5000
+
+# Option 2: Cloudflare Tunnel (free)
+cloudflared tunnel --url http://localhost:5000
+```
 
 ## Configuration
 
