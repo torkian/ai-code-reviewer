@@ -37,7 +37,7 @@ class TestBitbucketClient:
         assert extract_files_from_diff("") == []
         assert extract_files_from_diff(None) == []
     
-    @patch.dict('os.environ', {'BITBUCKET_ACCESS_TOKEN': 'test-token'})
+    @patch('src.utils.bitbucket_client.BITBUCKET_ACCESS_TOKEN', 'test-token')
     @patch('requests.get')
     def test_get_pr_diff_success(self, mock_get, sample_pr_info, sample_diff):
         """Test successful PR diff retrieval"""
@@ -59,13 +59,13 @@ class TestBitbucketClient:
         assert 'Authorization' in headers
         assert headers['Authorization'] == 'Bearer test-token'
     
-    @patch.dict('os.environ', {}, clear=True)
+    @patch('src.utils.bitbucket_client.BITBUCKET_ACCESS_TOKEN', None)
     def test_get_pr_diff_no_token(self, sample_pr_info):
         """Test PR diff retrieval without token"""
         result = get_pr_diff(sample_pr_info)
         assert result is None
     
-    @patch.dict('os.environ', {'BITBUCKET_ACCESS_TOKEN': 'test-token'})
+    @patch('src.utils.bitbucket_client.BITBUCKET_ACCESS_TOKEN', 'test-token')
     @patch('requests.get')
     def test_get_pr_diff_api_error(self, mock_get, sample_pr_info):
         """Test PR diff retrieval with API error"""
@@ -74,7 +74,7 @@ class TestBitbucketClient:
         result = get_pr_diff(sample_pr_info)
         assert result is None
     
-    @patch.dict('os.environ', {'BITBUCKET_ACCESS_TOKEN': 'test-token'})
+    @patch('src.utils.bitbucket_client.BITBUCKET_ACCESS_TOKEN', 'test-token')
     @patch('requests.post')
     def test_post_comment_success(self, mock_post, sample_pr_info):
         """Test successful comment posting"""
@@ -95,13 +95,13 @@ class TestBitbucketClient:
         assert 'content' in data
         assert 'AI Code Review' in data['content']['raw']
     
-    @patch.dict('os.environ', {}, clear=True)
+    @patch('src.utils.bitbucket_client.BITBUCKET_ACCESS_TOKEN', None)
     def test_post_comment_no_token(self, sample_pr_info):
         """Test comment posting without token"""
         result = post_comment_to_pr(sample_pr_info, "Test comment")
         assert result is False
     
-    @patch.dict('os.environ', {'BITBUCKET_ACCESS_TOKEN': 'test-token'})
+    @patch('src.utils.bitbucket_client.BITBUCKET_ACCESS_TOKEN', 'test-token')
     @patch('requests.post')
     def test_post_inline_comment_success(self, mock_post, sample_pr_info):
         """Test successful inline comment posting"""
@@ -127,7 +127,7 @@ class TestBitbucketClient:
         assert data['inline']['path'] == 'src/test.py'
         assert data['inline']['to'] == 10
     
-    @patch.dict('os.environ', {'BITBUCKET_ACCESS_TOKEN': 'test-token'})
+    @patch('src.utils.bitbucket_client.BITBUCKET_ACCESS_TOKEN', 'test-token')
     @patch('requests.post')
     def test_post_inline_comment_invalid_line(self, mock_post, sample_pr_info):
         """Test inline comment with invalid line number"""
@@ -141,7 +141,7 @@ class TestBitbucketClient:
         assert result is False
         mock_post.assert_not_called()
     
-    @patch.dict('os.environ', {'BITBUCKET_ACCESS_TOKEN': 'test-token'})
+    @patch('src.utils.bitbucket_client.BITBUCKET_ACCESS_TOKEN', 'test-token')
     def test_post_inline_comment_none_file(self, sample_pr_info):
         """Test inline comment with None file path"""
         result = post_inline_comment_to_pr(

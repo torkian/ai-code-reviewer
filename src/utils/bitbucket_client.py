@@ -72,15 +72,11 @@ def post_comment_to_pr(pr_info, comment):
         # Prepare authentication
         headers = {"Content-Type": "application/json"}
         
-        if BITBUCKET_ACCESS_TOKEN:
-            # Use token-based authentication
-            headers["Authorization"] = f"Bearer {BITBUCKET_ACCESS_TOKEN}"
-        elif BITBUCKET_APP_PASSWORD:
-            # Use app password in Authorization header
-            headers["Authorization"] = f"Bearer {BITBUCKET_APP_PASSWORD}"
-        else:
-            logger.error("No authentication credentials provided for Bitbucket API")
+        if not BITBUCKET_ACCESS_TOKEN:
+            logger.error("BITBUCKET_ACCESS_TOKEN not configured")
             return False
+            
+        headers["Authorization"] = f"Bearer {BITBUCKET_ACCESS_TOKEN}"
         
         # Make the request
         response = requests.post(
@@ -153,15 +149,11 @@ def post_inline_comment_to_pr(pr_info, file_path, line_number, comment):
         # Prepare authentication
         headers = {"Content-Type": "application/json"}
         
-        if BITBUCKET_ACCESS_TOKEN:
-            # Use token-based authentication
-            headers["Authorization"] = f"Bearer {BITBUCKET_ACCESS_TOKEN}"
-        elif BITBUCKET_APP_PASSWORD:
-            # Use app password in Authorization header
-            headers["Authorization"] = f"Bearer {BITBUCKET_APP_PASSWORD}"
-        else:
-            logger.error("No authentication credentials provided for Bitbucket API")
+        if not BITBUCKET_ACCESS_TOKEN:
+            logger.error("BITBUCKET_ACCESS_TOKEN not configured")
             return False
+            
+        headers["Authorization"] = f"Bearer {BITBUCKET_ACCESS_TOKEN}"
         
         # Based on our test results, we found that this repo doesn't support commit_id
         # Use the format without commit_id that worked in our tests

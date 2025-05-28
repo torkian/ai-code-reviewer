@@ -91,10 +91,11 @@ class TestWebhookUtils:
             return "success"
         
         with app.test_request_context('/', method='POST', data=b'test'):
-            with patch.dict('os.environ', {'WEBHOOK_SECRET': 'test-secret'}):
+            with patch('src.utils.webhook_utils.WEBHOOK_SECRET', 'test-secret'):
                 result = test_function()
-                # Should return error JSON response
-                assert hasattr(result, 'status_code')
+                # Should return error JSON response tuple
+                assert isinstance(result, tuple)
+                assert result[1] == 401
     
     def test_verify_webhook_signature_valid(self):
         """Test webhook signature verification with valid signature"""
@@ -116,7 +117,7 @@ class TestWebhookUtils:
         headers = {'X-Hub-Signature-256': f'sha256={signature}'}
         
         with app.test_request_context('/', method='POST', data=payload, headers=headers):
-            with patch.dict('os.environ', {'WEBHOOK_SECRET': secret}):
+            with patch('src.utils.webhook_utils.WEBHOOK_SECRET', secret):
                 result = test_function()
                 assert result == "success"
     
@@ -131,10 +132,11 @@ class TestWebhookUtils:
         headers = {'X-Hub-Signature-256': 'sha256=invalid-signature'}
         
         with app.test_request_context('/', method='POST', data=b'test', headers=headers):
-            with patch.dict('os.environ', {'WEBHOOK_SECRET': 'test-secret'}):
+            with patch('src.utils.webhook_utils.WEBHOOK_SECRET', 'test-secret'):
                 result = test_function()
-                # Should return error JSON response
-                assert hasattr(result, 'status_code')
+                # Should return error JSON response tuple
+                assert isinstance(result, tuple)
+                assert result[1] == 401
     
     def test_verify_webhook_signature_different_formats(self):
         """Test webhook signature verification with different header formats"""
@@ -156,6 +158,6 @@ class TestWebhookUtils:
         headers = {'X-Hub-Signature': signature}
         
         with app.test_request_context('/', method='POST', data=payload, headers=headers):
-            with patch.dict('os.environ', {'WEBHOOK_SECRET': secret}):
+            with patch('src.utils.webhook_utils.WEBHOOK_SECRET', secret):
                 result = test_function()
                 assert result == "success"
