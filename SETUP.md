@@ -38,7 +38,7 @@ Before starting, ensure you have:
 1. **Clone and setup**
    ```bash
    git clone <repository-url>
-   cd bitbucket-ai-reviewer
+   cd ai-code-reviewer
    pip install -r requirements.txt
    ```
 
@@ -70,7 +70,7 @@ Before starting, ensure you have:
 1. **Clone and setup**
    ```bash
    git clone <repository-url>
-   cd bitbucket-ai-reviewer
+   cd ai-code-reviewer
    ```
 
 2. **Configure environment**
@@ -170,7 +170,7 @@ All these platforms provide **free tiers** and **automatic HTTPS** for webhook s
    tail -f logs/ai_reviewer_$(date +%Y%m%d).log
    
    # For Docker deployment
-   docker-compose logs -f bitbucket-ai-reviewer
+   docker-compose logs -f ai-code-reviewer
    ```
 
 ## Step 6: Troubleshooting

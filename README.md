@@ -55,8 +55,8 @@ An intelligent, automated code review bot that revolutionizes your development w
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/bitbucket-ai-reviewer.git
-cd bitbucket-ai-reviewer
+git clone https://github.com/torkian/ai-code-reviewer.git
+cd ai-code-reviewer
 
 # 2. Configure your environment
 cp .env.example .env
@@ -73,8 +73,8 @@ curl http://localhost:5000/test
 
 ```bash
 # 1. Clone and setup
-git clone https://github.com/your-username/bitbucket-ai-reviewer.git
-cd bitbucket-ai-reviewer
+git clone https://github.com/torkian/ai-code-reviewer.git
+cd ai-code-reviewer
 pip install -r requirements.txt
 
 # 2. Configure environment
@@ -317,8 +317,8 @@ We welcome contributions! This project thrives on community input and improvemen
 ### Development Setup
 
 ```bash
-git clone https://github.com/your-username/bitbucket-ai-reviewer.git
-cd bitbucket-ai-reviewer
+git clone https://github.com/torkian/ai-code-reviewer.git
+cd ai-code-reviewer
 pip install -r requirements.txt
 cp .env.example .env
 # Configure your development environment
@@ -347,15 +347,15 @@ If this project helps you, please consider:
 
 See the [LICENSE](LICENSE) file for full details.
 
-**Created with ❤️ by [Behzad Torkian](https://github.com/your-username)**
+**Created with ❤️ by [Behzad Torkian](https://github.com/torkian)**
 
 ## 🆘 Support & Community
 
 ### Getting Help
 
 - 📖 **Documentation**: Start with [SETUP.md](SETUP.md) for detailed instructions
-- 🐛 **Issues**: [Open an issue](https://github.com/your-username/bitbucket-ai-reviewer/issues) for bugs or feature requests
-- 💬 **Discussions**: Share ideas and ask questions in [Discussions](https://github.com/your-username/bitbucket-ai-reviewer/discussions)
+- 🐛 **Issues**: [Open an issue](https://github.com/torkian/ai-code-reviewer/issues) for bugs or feature requests
+- 💬 **Discussions**: Share ideas and ask questions in [Discussions](https://github.com/torkian/ai-code-reviewer/discussions)
 
 ### Quick Troubleshooting
 
@@ -372,7 +372,7 @@ See the [LICENSE](LICENSE) file for full details.
 
 **🚀 Ready to revolutionize your code reviews?**
 
-[⭐ Star this repo](https://github.com/your-username/bitbucket-ai-reviewer) | [🍴 Fork it](https://github.com/your-username/bitbucket-ai-reviewer/fork) | [📖 Read the docs](SETUP.md)
+[⭐ Star this repo](https://github.com/torkian/ai-code-reviewer) | [🍴 Fork it](https://github.com/torkian/ai-code-reviewer/fork) | [📖 Read the docs](SETUP.md)
 
 *Built for developers, by developers. Made with 🤖 AI and ❤️ open source.*
 

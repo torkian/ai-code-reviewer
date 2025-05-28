@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  bitbucket-ai-reviewer:
+  ai-code-reviewer:
     build: .
     ports:
       - "5000:5000"
