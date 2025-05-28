@@ -21,7 +21,7 @@ def check_dependencies():
     print("🔍 Checking dependencies...")
 
     required_packages = [
-        'flask', 'requests', 'python-dotenv', 'werkzeug', 'gunicorn'
+        'flask', 'requests', 'dotenv', 'werkzeug', 'gunicorn'
     ]
 
     missing_packages = []
