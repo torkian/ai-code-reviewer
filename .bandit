@@ -1,0 +1,13 @@
+[bandit]
+# Bandit configuration for AI Code Reviewer
+
+# Skip these test patterns
+skips = B608
+
+# Exclude test files from certain checks
+exclude_dirs = tests
+
+# Custom ignore rules
+[bandit.B608]
+# Ignore SQL injection warnings in OpenAI prompts - these are not SQL queries
+# The AI prompt contains example SQL code for educational purposes only

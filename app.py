@@ -260,5 +260,7 @@ def webhook():
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     debug = os.getenv("FLASK_DEBUG", "false").lower() == "true"
-    logger.info(f"Starting server on port {port}, debug={debug}")
-    app.run(debug=debug, host="0.0.0.0", port=port)
+    # Use 0.0.0.0 for containerized environments, 127.0.0.1 for local dev
+    host = os.getenv("HOST", "0.0.0.0")  # nosec B104
+    logger.info(f"Starting server on {host}:{port}, debug={debug}")
+    app.run(debug=debug, host=host, port=port)

@@ -82,7 +82,8 @@ def post_comment_to_pr(pr_info, comment):
         response = requests.post(
             url,
             headers=headers,
-            json=data
+            json=data,
+            timeout=30
         )
         
         response.raise_for_status()
@@ -172,7 +173,8 @@ def post_inline_comment_to_pr(pr_info, file_path, line_number, comment):
         response = requests.post(
             url,
             headers=headers,
-            json=data
+            json=data,
+            timeout=30
         )
         
         # Check if successful
@@ -206,7 +208,8 @@ def get_latest_commit_id(pr_info):
         # Make the request
         response = requests.get(
             url,
-            headers=headers
+            headers=headers,
+            timeout=30
         )
         
         response.raise_for_status()

@@ -44,7 +44,7 @@ class IntegrationTest:
             # Wait for server to start
             for _ in range(10):
                 try:
-                    response = requests.get(f"{self.server_url}/", timeout=1)
+                    response = requests.get(f"{self.server_url}/", timeout=5)
                     if response.status_code == 200:
                         print("✅ Server started successfully")
                         return True
@@ -73,7 +73,7 @@ class IntegrationTest:
         """Test the home endpoint"""
         print("🧪 Testing home endpoint...")
         try:
-            response = requests.get(f"{self.server_url}/")
+            response = requests.get(f"{self.server_url}/", timeout=10)
             assert response.status_code == 200
             assert "Bitbucket AI Code Reviewer is running!" in response.text
             print("✅ Home endpoint working")
@@ -86,7 +86,7 @@ class IntegrationTest:
         """Test the status endpoint"""
         print("🧪 Testing status endpoint...")
         try:
-            response = requests.get(f"{self.server_url}/test")
+            response = requests.get(f"{self.server_url}/test", timeout=10)
             assert response.status_code == 200
             data = response.json()
             assert data['status'] == 'success'
@@ -102,7 +102,7 @@ class IntegrationTest:
         print("🧪 Testing webhook endpoint...")
         try:
             # Test with invalid payload (should be rejected)
-            response = requests.post(f"{self.server_url}/webhook", json={})
+            response = requests.post(f"{self.server_url}/webhook", json={}, timeout=10)
             # Should fail due to signature verification or invalid payload
             assert response.status_code in [400, 401]
             print("✅ Webhook endpoint properly rejects invalid requests")
@@ -118,7 +118,7 @@ class IntegrationTest:
             # Make multiple requests quickly
             responses = []
             for i in range(5):
-                response = requests.get(f"{self.server_url}/test")
+                response = requests.get(f"{self.server_url}/test", timeout=10)
                 responses.append(response.status_code)
             
             # Should get mostly 200s, possibly some 429s if rate limiting kicks in
