@@ -38,6 +38,23 @@ class TestWebhookUtils:
         payload = {'repository': {'name': 'test'}}
         assert is_pull_request_event(payload, headers) is False
 
+    def test_is_pull_request_event_github_header(self):
+        """Test PR event detection with GitHub header"""
+        payload = {}
+        headers = {'X-GitHub-Event': 'pull_request'}
+
+        assert is_pull_request_event(payload, headers) is True
+
+        headers = {'X-GitHub-Event': 'push'}
+        assert is_pull_request_event(payload, headers) is False
+
+    def test_is_pull_request_event_github_payload(self):
+        """Test PR event detection with GitHub payload"""
+        payload = {'pull_request': {'number': 456}}
+        headers = {}
+
+        assert is_pull_request_event(payload, headers) is True
+
     def test_is_pull_request_event_exception(self):
         """Test PR event detection with exception"""
         # Invalid payload that might cause exception
@@ -57,6 +74,19 @@ class TestWebhookUtils:
         assert result['destination_branch'] == 'main'
         assert result['repository']['full_name'] == 'test-user/test-repo'
         assert 'links' in result
+
+    def test_extract_pr_info_github(self, sample_github_webhook_payload):
+        """Test GitHub PR info extraction"""
+        result = extract_pr_info(sample_github_webhook_payload)
+
+        assert result['id'] == 456
+        assert result['title'] == 'Test GitHub PR'
+        assert result['source_branch'] == 'feature-branch'
+        assert result['destination_branch'] == 'main'
+        assert result['repository']['full_name'] == 'test-user/test-repo'
+        assert result['head_sha'] == 'abc123def456'
+        assert result['provider'] == 'github'
+        assert result['links']['diff']['href'] == 'https://api.github.com/repos/test-user/test-repo/pulls/456.diff'
 
     def test_extract_pr_info_empty_payload(self):
         """Test PR info extraction with empty payload"""

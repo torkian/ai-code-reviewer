@@ -12,12 +12,7 @@ from src.utils.webhook_utils import (
     is_pull_request_event,
     extract_pr_info
 )
-from src.utils.bitbucket_client import (
-    get_pr_diff,
-    post_comment_to_pr,
-    post_inline_comment_to_pr,
-    extract_files_from_diff
-)
+from src.utils import bitbucket_client, github_client
 from src.utils.openai_client import analyze_code_with_ai
 
 # Load environment variables
@@ -126,11 +121,19 @@ def webhook():
     pr_info = extract_pr_info(payload)
     logger.info(
         f"Processing PR #{pr_info['id']}: {pr_info['title']} "
-        f"from repo {pr_info['repository']['full_name']}"
+        f"from repo {pr_info['repository']['full_name']} "
+        f"({pr_info.get('provider', 'unknown')})"
     )
 
+    # Select client based on provider
+    provider = pr_info.get("provider", "bitbucket")
+    if provider == "github":
+        client = github_client
+    else:
+        client = bitbucket_client
+
     # Get the diff for the PR
-    diff = get_pr_diff(pr_info)
+    diff = client.get_pr_diff(pr_info)
     if not diff:
         logger.error("Failed to retrieve PR diff")
         return jsonify({
@@ -141,7 +144,7 @@ def webhook():
     logger.info(f"Retrieved diff with {len(diff)} characters")
 
     # Extract actual files from the diff for validation
-    actual_files = extract_files_from_diff(diff)
+    actual_files = client.extract_files_from_diff(diff)
     logger.info(
         f"Found {len(actual_files)} files in diff: "
         f"{', '.join(actual_files[:5])}"
@@ -153,11 +156,11 @@ def webhook():
     logger.info("AI analysis completed")
 
     # Post comments to the PR
-    logger.info("Posting comments to Bitbucket PR")
+    logger.info(f"Posting comments to {provider} PR")
 
     # Post overall comment
     if "overall_comment" in analysis:
-        post_comment_to_pr(pr_info, analysis["overall_comment"])
+        client.post_comment_to_pr(pr_info, analysis["overall_comment"])
 
     # Collect any inline comments that fail
     failed_comments = []
@@ -215,7 +218,7 @@ def webhook():
                 f"Posting inline comment for file: {file_path}, "
                 f"line: {line_number}"
             )
-            result = post_inline_comment_to_pr(
+            result = client.post_inline_comment_to_pr(
                 pr_info, file_path, line_number, comment_text
             )
 
@@ -268,7 +271,7 @@ def webhook():
                 f"Posting documentation suggestion for file: {file_path}, "
                 f"line: {line_number}"
             )
-            result = post_inline_comment_to_pr(
+            result = client.post_inline_comment_to_pr(
                 pr_info, file_path, line_number, doc_text
             )
 
@@ -303,7 +306,7 @@ def webhook():
                 f"{comment['comment']}\n\n---\n\n"
             )
 
-        post_comment_to_pr(pr_info, fallback_text)
+        client.post_comment_to_pr(pr_info, fallback_text)
 
     logger.info("PR processing complete")
 

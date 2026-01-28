@@ -13,6 +13,7 @@ def mock_env_vars():
     with patch.dict(os.environ, {
         'OPENAI_API_KEY': 'sk-test-key-12345',
         'BITBUCKET_ACCESS_TOKEN': 'test-bitbucket-token',
+        'GITHUB_ACCESS_TOKEN': 'test-github-token',
         'WEBHOOK_SECRET': 'test-webhook-secret',
         'PORT': '5000',
         'API_RATE_LIMIT': '60'
@@ -78,6 +79,30 @@ def sample_webhook_payload():
                     "href": "https://api.bitbucket.org/2.0/repositories/test-user/test-repo/pullrequests/123/diff"
                 }
             }
+        }
+    }
+
+
+@pytest.fixture
+def sample_github_webhook_payload():
+    """Sample GitHub webhook payload"""
+    return {
+        "action": "opened",
+        "pull_request": {
+            "number": 456,
+            "title": "Test GitHub PR",
+            "head": {
+                "ref": "feature-branch",
+                "sha": "abc123def456"
+            },
+            "base": {
+                "ref": "main"
+            },
+            "diff_url": "https://api.github.com/repos/test-user/test-repo/pulls/456.diff",
+            "html_url": "https://github.com/test-user/test-repo/pull/456"
+        },
+        "repository": {
+            "full_name": "test-user/test-repo"
         }
     }
 
