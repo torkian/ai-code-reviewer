@@ -81,16 +81,29 @@ def is_pull_request_event(payload, request_headers):
 
         # Check event key from headers if present in the request
         event_key = request_headers.get('X-Event-Key')
-        logger.info(f"X-Event-Key header: {event_key}")
+        if event_key:
+            logger.info(f"X-Event-Key header: {event_key}")
 
-        # First check the X-Event-Key header
+        # Check GitHub event header
+        github_event = request_headers.get('X-GitHub-Event')
+        if github_event:
+            logger.info(f"X-GitHub-Event header: {github_event}")
+            if github_event == 'pull_request':
+                return True
+
+        # First check the X-Event-Key header (Bitbucket)
         if event_key in ["pullrequest:created", "pullrequest:updated"]:
             logger.info(f"Detected PR event from header: {event_key}")
             return True
 
-        # Then check payload directly
+        # Then check payload directly (Bitbucket)
         if "pullrequest" in payload:
-            logger.info("Detected PR event from payload content")
+            logger.info("Detected Bitbucket PR event from payload content")
+            return True
+
+        # Check payload directly (GitHub)
+        if "pull_request" in payload:
+            logger.info("Detected GitHub PR event from payload content")
             return True
 
         logger.info("Not a PR event")
@@ -102,6 +115,31 @@ def is_pull_request_event(payload, request_headers):
 
 def extract_pr_info(payload):
     """Extract relevant PR information from webhook payload"""
+    # Check if it's a GitHub payload
+    if "pull_request" in payload:
+        pr = payload["pull_request"]
+        repo = payload.get("repository", {})
+        return {
+            "id": pr.get("number"),
+            "title": pr.get("title"),
+            "source_branch": pr.get("head", {}).get("ref"),
+            "destination_branch": pr.get("base", {}).get("ref"),
+            "repository": {
+                "full_name": repo.get("full_name")
+            },
+            "head_sha": pr.get("head", {}).get("sha"),
+            "provider": "github",
+            "links": {
+                "diff": {
+                    "href": pr.get("diff_url")
+                },
+                "html": {
+                    "href": pr.get("html_url")
+                }
+            }
+        }
+
+    # Default to Bitbucket
     pullrequest = payload.get("pullrequest", {})
     return {
         "id": pullrequest.get("id"),
@@ -120,4 +158,5 @@ def extract_pr_info(payload):
             ),
         },
         "links": pullrequest.get("links", {}),
+        "provider": "bitbucket"
     }
