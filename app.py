@@ -14,6 +14,7 @@ from src.utils.webhook_utils import (
 )
 from src.utils import bitbucket_client, github_client
 from src.utils.openai_client import analyze_code_with_ai
+from src.utils.config_utils import parse_repo_config, filter_diff
 
 # Load environment variables
 load_dotenv()
@@ -132,6 +133,23 @@ def webhook():
     else:
         client = bitbucket_client
 
+    # Try to load repo config
+    repo_config = {}
+    extra_instructions = None
+    ignore_patterns = []
+
+    config_content = client.get_file_content(pr_info, ".ai-reviewer.yml")
+    if config_content:
+        logger.info("Found .ai-reviewer.yml configuration file")
+        repo_config = parse_repo_config(config_content)
+        extra_instructions = repo_config.get("extra_instructions")
+        ignore_patterns = repo_config.get("ignore_files", [])
+
+        if extra_instructions:
+            logger.info("Loaded extra instructions from config")
+        if ignore_patterns:
+            logger.info(f"Loaded {len(ignore_patterns)} ignore patterns")
+
     # Get the diff for the PR
     diff = client.get_pr_diff(pr_info)
     if not diff:
@@ -143,6 +161,12 @@ def webhook():
 
     logger.info(f"Retrieved diff with {len(diff)} characters")
 
+    # Filter diff if needed
+    if ignore_patterns:
+        original_len = len(diff)
+        diff = filter_diff(diff, ignore_patterns)
+        logger.info(f"Filtered diff size: {len(diff)} characters (was {original_len})")
+
     # Extract actual files from the diff for validation
     actual_files = client.extract_files_from_diff(diff)
     logger.info(
@@ -152,7 +176,7 @@ def webhook():
 
     # Analyze the code with AI
     logger.info("Starting AI code analysis")
-    analysis = analyze_code_with_ai(diff)
+    analysis = analyze_code_with_ai(diff, extra_instructions)
     logger.info("AI analysis completed")
 
     # Post comments to the PR

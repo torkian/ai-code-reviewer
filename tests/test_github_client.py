@@ -8,8 +8,10 @@ from src.utils.github_client import (
     post_comment_to_pr,
     post_inline_comment_to_pr,
     extract_files_from_diff,
-    normalize_path
+    normalize_path,
+    get_file_content
 )
+import base64
 
 
 class TestGithubClient:
@@ -141,3 +143,23 @@ class TestGithubClient:
         )
 
         assert result is False
+
+    @patch('src.utils.github_client.GITHUB_ACCESS_TOKEN', 'test-token')
+    @patch('requests.get')
+    def test_get_file_content_success(self, mock_get, sample_github_webhook_payload):
+        """Test successful file content retrieval"""
+        from src.utils.webhook_utils import extract_pr_info
+        pr_info = extract_pr_info(sample_github_webhook_payload)
+
+        content = "test content"
+        encoded = base64.b64encode(content.encode('utf-8')).decode('utf-8')
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"content": encoded, "encoding": "base64"}
+        mock_response.raise_for_status.return_value = None
+        mock_get.return_value = mock_response
+
+        result = get_file_content(pr_info, ".ai-reviewer.yml")
+        assert result == "test content"
+        mock_get.assert_called_once()

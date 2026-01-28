@@ -273,3 +273,38 @@ def get_latest_commit_id(pr_info):
     except Exception as e:
         logger.error(f"Error getting latest commit ID: {str(e)}")
         return None
+
+def get_file_content(pr_info, file_path):
+    """Get content of a file from the repository at the source branch"""
+    try:
+        repo_full_name = pr_info['repository']['full_name']
+        source_branch = pr_info['source_branch']
+
+        url = (
+            f"{BITBUCKET_API_BASE}/repositories/"
+            f"{repo_full_name}/src/{source_branch}/{file_path}"
+        )
+
+        headers = {}
+        if not BITBUCKET_ACCESS_TOKEN:
+            logger.error("BITBUCKET_ACCESS_TOKEN not configured")
+            return None
+
+        headers["Authorization"] = f"Bearer {BITBUCKET_ACCESS_TOKEN}"
+
+        response = requests.get(
+            url,
+            headers=headers,
+            timeout=10
+        )
+
+        if response.status_code == 404:
+            logger.info(f"File {file_path} not found in repo")
+            return None
+
+        response.raise_for_status()
+        return response.text
+
+    except Exception as e:
+        logger.warning(f"Error getting file content for {file_path}: {str(e)}")
+        return None

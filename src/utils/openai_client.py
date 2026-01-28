@@ -104,7 +104,7 @@ def call_openai_api(prompt, system_message=None):
         return f"Error calling AI service: {str(e)}"
 
 
-def analyze_code_with_ai(diff):
+def analyze_code_with_ai(diff, extra_instructions=None):
     """
     Analyze code diff using OpenAI API and return structured analysis
     """
@@ -211,6 +211,9 @@ IMPORTANT GUIDELINES:
 6. NEVER duplicate the same recommendation in both quality comments and documentation suggestions.
 7. Format your response in the required JSON structure exactly as specified.
 """
+
+    if extra_instructions:
+        system_message += f"\n\nADDITIONAL REPO-SPECIFIC INSTRUCTIONS:\n{extra_instructions}"
 
     try:
         # Call OpenAI API

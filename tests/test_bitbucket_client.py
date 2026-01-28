@@ -8,7 +8,8 @@ from src.utils.bitbucket_client import (
     post_comment_to_pr,
     post_inline_comment_to_pr,
     extract_files_from_diff,
-    normalize_path
+    normalize_path,
+    get_file_content
 )
 
 
@@ -102,6 +103,31 @@ class TestBitbucketClient:
         """Test comment posting without token"""
         result = post_comment_to_pr(sample_pr_info, "Test comment")
         assert result is False
+
+    @patch('src.utils.bitbucket_client.BITBUCKET_ACCESS_TOKEN', 'test-token')
+    @patch('requests.get')
+    def test_get_file_content_success(self, mock_get, sample_pr_info):
+        """Test successful file content retrieval"""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.text = "content"
+        mock_response.raise_for_status.return_value = None
+        mock_get.return_value = mock_response
+
+        content = get_file_content(sample_pr_info, ".ai-reviewer.yml")
+        assert content == "content"
+        mock_get.assert_called_once()
+
+    @patch('src.utils.bitbucket_client.BITBUCKET_ACCESS_TOKEN', 'test-token')
+    @patch('requests.get')
+    def test_get_file_content_not_found(self, mock_get, sample_pr_info):
+        """Test file content retrieval when file not found"""
+        mock_response = MagicMock()
+        mock_response.status_code = 404
+        mock_get.return_value = mock_response
+
+        content = get_file_content(sample_pr_info, "nonexistent.yml")
+        assert content is None
 
     @patch('src.utils.bitbucket_client.BITBUCKET_ACCESS_TOKEN', 'test-token')
     @patch('requests.post')

@@ -27,6 +27,7 @@ def sample_pr_info():
     return {
         'id': 123,
         'title': 'Test PR',
+        'source_branch': 'feature-branch',
         'repository': {
             'full_name': 'test-user/test-repo'
         },
